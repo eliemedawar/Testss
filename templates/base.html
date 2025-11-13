@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+{% load static i18n unipark_tags %}
+{% get_current_language as CURRENT_LANGUAGE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ CURRENT_LANGUAGE|default:'en' }}"
+      dir="{{ HTML_DIR|default:'ltr' }}"
+      class="h-full antialiased bg-surface text-surface-900 {{ HTML_CLASS }} theme-{{ UNIPARK_THEME|default:'dark' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#5B00C7">
+    <meta name="color-scheme" content="dark light">
+    <title>{% block title %}UniPark{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="preload" href="https://fonts.bunny.net/css?family=Inter:400,600,700&display=swap" as="style" crossorigin>
+    <link rel="preload" href="{% static 'img/textures/lot-banner.svg' %}" as="image">
+
+    <script>
+        window.tailwind = window.tailwind || {};
+        window.tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#5B00C7',
+                            50: '#f5edff',
+                            100: '#e6d3ff',
+                            200: '#ccabff',
+                            300: '#b282ff',
+                            400: '#995aff',
+                            500: '#7f32f1',
+                            600: '#651ed3',
+                            700: '#5019a8',
+                            800: '#3b107e',
+                            900: '#260854',
+                        },
+                        accent: '#22C55E',
+                        surface: {
+                            50: '#f8f9ff',
+                            100: '#f1f3ff',
+                            200: '#e4e7ff',
+                            900: '#0f101c'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Inter Variable"', 'Inter', 'system-ui', 'sans-serif'],
+                        arabic: ['"Cairo Variable"', '"Cairo"', 'system-ui', 'sans-serif'],
+                        display: ['"Inter Variable"', 'Inter', 'system-ui'],
+                    },
+                    boxShadow: {
+                        glass: '0 20px 45px -20px rgba(91,0,199,0.45)',
+                        neon: '0 0 0 1px rgba(255,255,255,0.08), 0 15px 35px rgba(91,0,199,0.55)',
+                    }
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css"
+          integrity="sha512-1cK78a1o+ht2JcaW6g8OXYwqpev9+6GqOkz9xmBN9iUUhIndKtxwILGWYOSibOKjLsEdjyjZvYDq/cZwNeak0w=="
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"
+          integrity="sha512-Zcn6bjR/8RZbLEpLIeOwNtzREBAJnUKESxces60Mpoj+2okopSAcSUIUOseddDm0cxnGQzxIR7vJgsLZbdLE3w=="
+          crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="{% static 'css/tailwind-cdn.css' %}">
+    <link rel="stylesheet" href="{% static 'css/unipark.css' %}">
+    <link rel="stylesheet" href="{% static 'css/cards.css' %}">
+    {% if IS_AUTH_PAGE %}
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    {% endif %}
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/logos/unipark-icon.svg' %}">
+
+    <style>
+        /* Critical hero background gradient */
+        .hero-gradient {
+            background: radial-gradient(120% 120% at 50% 0%, rgba(124, 42, 232, 0.22) 0%, rgba(15, 16, 28, 0.85) 52%, rgba(17, 16, 41, 1) 100%);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="relative min-h-screen bg-surface-50 dark:bg-surface-900 transition-colors duration-500">
+    <div class="pointer-events-none fixed inset-0 opacity-40 mix-blend-screen noise-texture" aria-hidden="true"></div>
+    <a href="#page-main" class="skip-link focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">
+        {% trans "Skip to main content" %}
+    </a>
+
+    {% if not IS_AUTH_PAGE %}
+    {% include 'partials/_navbar.html' %}
+    {% endif %}
+
+    <main id="page-main" class="relative z-10 pt-24 lg:pt-28">
+        {% block content %}{% endblock %}
+    </main>
+
+    <div id="modal-root" aria-live="polite" aria-atomic="true"></div>
+
+    {% if not IS_AUTH_PAGE %}
+    {% include 'partials/_footer.html' %}
+    {% include 'partials/_toast.html' %}
+    {% endif %}
+
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+            integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"
+            integrity="sha512-jEnuDt6jfecCjthQAJ+ed0MTVA++5ZKmlUcmDGBv2vUI/REn6FuIdixLNnQT+vKusE2hhTk2is3cFvv5wA+Sgg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script defer src="https://unpkg.com/aos@2.3.4/dist/aos.js"
+            integrity="sha512-A7AYk1fGKX6S2SsHywmPkrnzTZHrgiVT7GcQkLGDe2ev0aWb8zejytzS8wjo7PGEXKqJOrjQ4oORtnimIRZBtw=="
+            crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/htmx/1.9.12/htmx.min.js"
+            integrity="sha512-JvpjarJlOl4sW26MnEb3IdSAcGdeTeOaAlu2gUZtfFrRgnChdzELOZKl0mN6ZvI0X+xiX5UMvxjK2Rx2z/fliw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.10/cdn.min.js"
+            integrity="sha512-dY1RrE1UTNd/Y4JdiPVn8EAb4rcAlPqYQNn2SSQdPP5sLfCDnvRS14gbYJnSRkc3DWiL7ggupu+bCw590rcXyg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"
+            integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script defer src="{% static 'js/unipark.js' %}"></script>
+    <script defer src="{% static 'js/cards.js' %}"></script>
+    {% if IS_AUTH_PAGE %}
+    <script defer src="{% static 'js/auth.js' %}"></script>
+    {% endif %}
+    {% if request.path == '/' %}
+    <script defer src="{% static 'js/animations.js' %}"></script>
+    {% endif %}
+    {% if messages %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            {% for message in messages %}
+            document.dispatchEvent(new CustomEvent('unipark:toast', {
+                detail: {
+                    title: "{{ message|escapejs }}",
+                    message: "",
+                    variant: "{{ message.tags|default:'info' }}"
+                }
+            }));
+            {% endfor %}
+        });
+    </script>
+    {% endif %}
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
